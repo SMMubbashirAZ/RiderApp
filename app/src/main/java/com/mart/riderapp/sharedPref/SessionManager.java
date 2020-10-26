@@ -6,6 +6,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 
 import com.google.gson.Gson;
+import com.mart.riderapp.Constants.AppConstants;
+import com.mart.riderapp.activities.LoginActivity;
+import com.mart.riderapp.model.UserModel;
 
 /**
  * Created by WeMartDevelopers .
@@ -34,16 +37,16 @@ public class SessionManager {
         doCommit();
     }
 
-    public void createShopObject(ShopsModel userModel)
-    {
-//        mEditor.putBoolean(AppConstants.SHOPS, true);
-        doEdit();
-        Gson gson = new Gson();
-        mEditor.putString(AppConstants.SHOPS,gson.toJson(userModel));
-        mEditor.apply();
-    }
+//    public void createShopObject(ShopsModel userModel)
+//    {
+////        mEditor.putBoolean(AppConstants.SHOPS, true);
+//        doEdit();
+//        Gson gson = new Gson();
+//        mEditor.putString(AppConstants.SHOPS,gson.toJson(userModel));
+//        mEditor.apply();
+//    }
 
-
+/*
     public ShopsModel getShopsObj(){
 
         Gson gson = new Gson();
@@ -65,7 +68,7 @@ public class SessionManager {
         Gson gson = new Gson();
         String json = mPref.getString(AppConstants.PRODUCT, "");
         return gson.fromJson(json, ProductModel.class);
-    }
+    }*/
     public UserModel getUserSession(){
         Gson gson = new Gson();
         String json = mPref.getString("UserModel", "");

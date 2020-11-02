@@ -7,7 +7,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.Volley;
-import com.mart.venderapplication.WeMartz;
+import com.mart.riderapp.WeMartz;
 
 public class VolleySingleton {
 

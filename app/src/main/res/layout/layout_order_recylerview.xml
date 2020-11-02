@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:background="@color/transparent"
+    android:layout_marginTop="@dimen/_2sdp"
+    android:layout_height="wrap_content">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        android:layout_marginBottom="@dimen/_minus_10_sdp"
+
+        >
+
+        <TextView
+            android:id="@+id/tv_order_history_not_approved"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:background="@drawable/top_bottom_right_red"
+            android:padding="7dp"
+            android:layout_alignParentLeft="true"
+            android:fontFamily="@font/suzuki_pro_regular"
+            android:textSize="@dimen/_7sdp"
+            android:text="Not Approved"
+            android:textColor="#ffffff" />
+
+
+
+        <TextView
+            android:id="@+id/tv_order_history_approved"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:background="@drawable/top_bottom_right_green"
+            android:padding="7dp"
+            android:layout_alignParentLeft="true"
+            android:fontFamily="@font/suzuki_pro_regular"
+            android:textSize="@dimen/_7sdp"
+            android:text="Approved"
+            android:textColor="#ffffff"  />
+
+
+    </RelativeLayout>
+    <LinearLayout
+        android:orientation="horizontal" android:layout_width="match_parent"
+        android:background="@color/transparent"
+        android:layout_height="wrap_content">
+        <com.mart.riderapp.utils.HexagonMaskView
+            android:id="@+id/hmv_order_history_image"
+            android:layout_width="@dimen/_60sdp"
+            android:layout_height="@dimen/_60sdp"
+            android:src="@drawable/avatar"
+
+            android:scaleType="fitXY"/>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_order_history_shop_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/_5sdp"
+                android:paddingLeft="@dimen/_10sdp"
+                android:paddingBottom="@dimen/_1sdp"
+                android:paddingRight="@dimen/_10sdp"
+                android:textColor="@color/text_dark"
+                android:fontFamily="@font/suzuki_pro_regular"
+                android:text="User Name"
+                android:textSize="@dimen/_14sdp"
+                android:layout_gravity="center_vertical"
+                />
+            <TextView
+                android:id="@+id/tv_order_history_delivered"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/_10sdp"
+                android:paddingRight="@dimen/_10sdp"
+                android:textColor="@color/text_dark"
+                android:fontFamily="@font/suzuki_pro_regular"
+                android:text="Delivered By WeMart"
+                android:textSize="@dimen/_13sdp"
+                android:layout_gravity="center_vertical"
+                />
+            <TextView
+                android:id="@+id/tv_order_history_date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/_10sdp"
+                android:paddingBottom="@dimen/_3sdp"
+                android:paddingRight="@dimen/_10sdp"
+                android:textColor="@color/text_light_grey"
+                android:fontFamily="@font/suzuki_pro_regular"
+                android:text="23-Jul-2020"
+                android:textSize="@dimen/_12sdp"
+                android:layout_gravity="center_vertical"
+                />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_order_history_price"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/_15sdp"
+                android:paddingLeft="@dimen/_10sdp"
+                android:paddingBottom="@dimen/_1sdp"
+                android:paddingRight="@dimen/_10sdp"
+                android:textColor="@color/text_dark"
+                android:fontFamily="@font/suzuki_pro_regular"
+                android:text="Rs.200"
+                android:textSize="@dimen/_14sdp"
+                android:textAlignment="textEnd"
+                android:layout_gravity="end"
+                />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/_10sdp"
+                android:paddingBottom="@dimen/_1sdp"
+                android:paddingRight="@dimen/_10sdp"
+                android:textColor="@color/text_dark"
+                android:fontFamily="@font/suzuki_pro_regular"
+                android:text="Customer Number"
+                android:textSize="@dimen/_12sdp"
+                android:textAlignment="textEnd"
+                android:layout_gravity="end"
+                /><TextView
+                android:id="@+id/tv_order_history_number"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/_1sdp"
+                android:paddingRight="@dimen/_10sdp"
+                android:textColor="@color/text_dark"
+                android:fontFamily="@font/suzuki_pro_regular"
+                android:text="Rs.200"
+                android:textSize="@dimen/_12sdp"
+                android:textAlignment="center"
+                android:layout_gravity="center"
+                />
+        </LinearLayout>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_marginTop="@dimen/_5sdp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="@dimen/_60sdp"
+            android:layout_height="wrap_content"
+            android:textAlignment="textEnd"
+
+            android:paddingBottom="@dimen/_1sdp"
+            android:textColor="@color/text_dark"
+            android:fontFamily="@font/suzuki_pro_regular"
+            android:text="Orders:"
+            android:textSize="@dimen/_12sdp"
+            />
+        <TextView
+            android:id="@+id/tv_order_history_order"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/_10sdp"
+            android:paddingBottom="@dimen/_1sdp"
+            android:paddingRight="@dimen/_10sdp"
+            android:textColor="@color/text_dark"
+            android:fontFamily="@font/suzuki_pro_regular"
+            android:text="1x Shawarma Lovers , 1x Soft Drinks , 1x Spicy Italian Pizza"
+            android:textSize="@dimen/_12sdp"
+            android:layout_gravity="center_vertical"
+            />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_weight="4"
+        >
+
+        <TextView
+            android:layout_width="@dimen/_60sdp"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/suzuki_pro_regular"
+
+            android:paddingBottom="@dimen/_1sdp"
+            android:text="Status:"
+            android:textAlignment="textEnd"
+            android:textColor="@color/green"
+            android:textSize="@dimen/_12sdp" />
+
+        <TextView
+            android:id="@+id/tv_order_history_status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:fontFamily="@font/suzuki_pro_regular"
+            android:paddingLeft="@dimen/_10sdp"
+            android:paddingRight="@dimen/_10sdp"
+            android:paddingBottom="@dimen/_1sdp"
+            android:text="1x Shawarma Lovers , 1x Soft Drinks , 1x Spicy Italian Pizza"
+            android:textColor="@color/green"
+            android:textSize="@dimen/_12sdp" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_weight="4"
+        >
+
+        <TextView
+            android:layout_width="@dimen/_60sdp"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/suzuki_pro_regular"
+
+            android:paddingBottom="@dimen/_1sdp"
+            android:text="User Location:"
+            android:textAlignment="textEnd"
+            android:textColor="@color/green"
+            android:textSize="@dimen/_12sdp" />
+
+        <TextView
+            android:id="@+id/tv_order_history_user_loc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:fontFamily="@font/suzuki_pro_regular"
+            android:paddingLeft="@dimen/_10sdp"
+            android:paddingRight="@dimen/_10sdp"
+            android:paddingBottom="@dimen/_1sdp"
+            android:text="1x Shawarma Lovers , 1x Soft Drinks , 1x Spicy Italian Pizza"
+            android:textColor="@color/green"
+            android:textSize="@dimen/_12sdp" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_weight="4"
+        >
+
+        <TextView
+            android:layout_width="@dimen/_60sdp"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/suzuki_pro_regular"
+
+            android:paddingBottom="@dimen/_1sdp"
+            android:text="Shop Location:"
+            android:textAlignment="textEnd"
+            android:textColor="@color/green"
+            android:textSize="@dimen/_12sdp" />
+
+        <TextView
+            android:id="@+id/tv_order_history_shop_loc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:fontFamily="@font/suzuki_pro_regular"
+            android:paddingLeft="@dimen/_10sdp"
+            android:paddingRight="@dimen/_10sdp"
+            android:paddingBottom="@dimen/_1sdp"
+            android:text="1x Shawarma Lovers , 1x Soft Drinks , 1x Spicy Italian Pizza"
+            android:textColor="@color/green"
+            android:textSize="@dimen/_12sdp" />
+    </LinearLayout>
+    <ImageView
+         android:layout_width="@dimen/_50sdp"
+        android:layout_height="@dimen/_35sdp"
+
+        android:scaleType="fitXY"
+        android:visibility="gone"
+        android:id="@+id/iv_order_history_track"
+        android:src="@drawable/locate"
+        android:layout_gravity="end"
+        android:layout_marginTop="@dimen/_minus_15_sdp"/>
+
+    
+</LinearLayout>

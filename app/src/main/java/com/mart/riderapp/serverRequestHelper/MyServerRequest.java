@@ -79,18 +79,22 @@ public class MyServerRequest {
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, jsonObject, response -> {
                 try {
                     if (response.getBoolean(AppConstants.HAS_RESPONSE)) {
+                        UtilityFunctions.hideProgressDialog(true);
                         serverRequestListener.onPostResponse(response, requestCode);
 //                        context.startActivity(new Intent(context,LoginActivity.class));
 
 
                     } else {
+                        UtilityFunctions.hideProgressDialog(true);
                         Toast.makeText(context, " "+response.getString(AppConstants.MESSAGE), Toast.LENGTH_SHORT).show();
                     }
                 } catch (JSONException e) {
+                    UtilityFunctions.hideProgressDialog(true);
 
                 }
 
             }, error -> {
+                UtilityFunctions.hideProgressDialog(true);
                 VolleyLog.e("TransactionRequest", "Error: " + error);
                 Log.e("TransactionRequest", "Error: " + error);
                 VolleyErrorHelper.ShowError(error, context, listener);
@@ -102,6 +106,7 @@ public class MyServerRequest {
                     DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
             queue.add(jsonObjectRequest);
         } else {
+            UtilityFunctions.hideProgressDialog(true);
             HeaderDialog.showInfoDialog(context, context.getResources().getString(R.string.messages),
                     "No internet connection found please check your wifi or network state", () -> ((Activity) context).finish());
         }
@@ -117,6 +122,7 @@ public class MyServerRequest {
                 serverRequestListener.onPostResponse(response, requestCode);
 
             }, error -> {
+                UtilityFunctions.hideProgressDialog(true);
                 VolleyLog.e("TransactionRequest", "Error: " + error);
                 Log.e("TransactionRequest", "Error: " + error);
                 VolleyErrorHelper.ShowError(error, context, listener);

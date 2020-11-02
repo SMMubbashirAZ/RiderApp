@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import com.google.gson.Gson;
 import com.mart.riderapp.Constants.AppConstants;
 import com.mart.riderapp.activities.LoginActivity;
+import com.mart.riderapp.model.OrderHistoryModel;
 import com.mart.riderapp.model.UserModel;
 
 /**
@@ -37,15 +38,20 @@ public class SessionManager {
         doCommit();
     }
 
-//    public void createShopObject(ShopsModel userModel)
-//    {
-////        mEditor.putBoolean(AppConstants.SHOPS, true);
-//        doEdit();
-//        Gson gson = new Gson();
-//        mEditor.putString(AppConstants.SHOPS,gson.toJson(userModel));
-//        mEditor.apply();
-//    }
+    public void createOrderObject(OrderHistoryModel userModel)
+    {
+//        mEditor.putBoolean(AppConstants.SHOPS, true);
+        doEdit();
+        Gson gson = new Gson();
+        mEditor.putString(AppConstants.ORDERS,gson.toJson(userModel));
+        mEditor.apply();
+    }
+    public OrderHistoryModel getOrdersObj(){
 
+        Gson gson = new Gson();
+        String json = mPref.getString(AppConstants.ORDERS, "");
+        return gson.fromJson(json, OrderHistoryModel.class);
+    }
 /*
     public ShopsModel getShopsObj(){
 

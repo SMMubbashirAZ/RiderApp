@@ -45,10 +45,10 @@
         android:id="@+id/view_track__overlayloader"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/_250sdp"
         android:alpha="0"
         android:background="#aa000000"
         android:clickable="true"
-        android:layout_marginTop="@dimen/_250sdp"
         android:visibility="gone" />
 
     <LinearLayout
@@ -56,13 +56,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
 
+        android:layout_alignParentBottom="true"
         android:layout_marginStart="@dimen/_2sdp"
         android:layout_marginEnd="@dimen/_2sdp"
-        android:layout_alignParentBottom="true"
         android:alpha="0"
         android:background="@drawable/code_box"
         android:orientation="vertical"
-        android:translationY="@dimen/_500sdp"
+        android:translationY="@dimen/_200sdp"
         android:visibility="gone">
 
         <ImageView
@@ -317,34 +317,35 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:weightSum="2"
-            >
+            android:weightSum="2">
+
             <Button
                 android:id="@+id/btn_track_pickOrder"
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="57dp"
-                android:layout_marginLeft="50dp"
-                android:layout_marginRight="50dp"
+                android:layout_marginLeft="@dimen/_10sdp"
+                android:layout_marginRight="@dimen/_10sdp"
+                android:layout_weight="1"
                 android:background="@drawable/all_btns_bkg_green"
                 android:fontFamily="@font/suzuki_pro_regular"
                 android:text="Pick Order"
                 android:textAllCaps="false"
                 android:textColor="@android:color/white"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
+
             <Button
                 android:id="@+id/btn_track_deliveredOrder"
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="57dp"
-                android:layout_marginLeft="50dp"
-                android:layout_marginRight="50dp"
+                android:layout_marginLeft="@dimen/_10sdp"
+                android:layout_marginRight="@dimen/_10sdp"
+                android:layout_weight="1"
                 android:background="@drawable/all_btns_bkg_green"
                 android:fontFamily="@font/suzuki_pro_regular"
                 android:text="Delivered Order"
                 android:textAllCaps="false"
                 android:textColor="@android:color/white"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
         </LinearLayout>
 
     </LinearLayout>

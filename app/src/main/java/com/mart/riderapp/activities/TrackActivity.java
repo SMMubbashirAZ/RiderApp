@@ -83,7 +83,9 @@ public class TrackActivity extends FragmentActivity implements OnMapReadyCallbac
     private Handler mHandler = new Handler();
     private Runnable runnable;
     private Button pickOrder,deliveredOrder;
+    private static final int REQUEST_CODE_LOCATION_PERMISSION = 1;
 
+    private Handler handler= new Handler();
     private String status="";
     private ImageView iv_closelist, iv_cust_no;
     private OrderHistoryModel orderHistoryModel;
@@ -100,7 +102,11 @@ public class TrackActivity extends FragmentActivity implements OnMapReadyCallbac
             startActivity(new Intent(this, DashboardActivity.class));
             finish();
         } else {
-            getCurentLocation();
+            if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(TrackActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE_LOCATION_PERMISSION);
+            } else {
+                getCurentLocation();
+            }
             Date date;
             String formattedDate = null;
             try {
@@ -185,6 +191,14 @@ public class TrackActivity extends FragmentActivity implements OnMapReadyCallbac
         setlocationUpdates(new LatLng(orderHistoryModel.getShop_lat(), orderHistoryModel.getShop_lng())
                 , new LatLng(lat,lng),"Shop Location","Rider Location");
 
+//        runnable = new Runnable() {
+//            @Override
+//            public void run() {
+//                StartGettingLocation();
+//                handler.postDelayed(this, 1000);
+//            }
+//        };
+
     }
 
     @Override
@@ -197,53 +211,50 @@ public class TrackActivity extends FragmentActivity implements OnMapReadyCallbac
     @Override
     public void onLocationChanged(@NonNull Location location) {
 
-        postLatLngApi(location.getLatitude(),location.getLongitude());
+    }
+
+    private void StartGettingLocation(){
+
+        getCurentLocation();
+        postLatLngApi(lat,lng);
 
         if (status.equals("")){
             setlocationUpdates(new LatLng(orderHistoryModel.getShop_lat(), orderHistoryModel.getShop_lng())
-                    , new LatLng(location.getLatitude(),location.getLongitude()),"Shop Location","Rider Location");
+                    , new LatLng(lat,lng),"Shop Location","Rider Location");
             status="on the way";
         }
         if (status.equals("on the way")){
-            if (location.getLatitude()!=orderHistoryModel.getShop_lat()&&location.getLongitude()!=orderHistoryModel.getShop_lng()){
+            if (lat!=orderHistoryModel.getShop_lat()&&lng!=orderHistoryModel.getShop_lng()){
                 setlocationUpdates(new LatLng(orderHistoryModel.getShop_lat(), orderHistoryModel.getShop_lng())
-                        , new LatLng(location.getLatitude(),location.getLongitude()),"Shop Location","Rider Location");
+                        , new LatLng(lat,lng),"Shop Location","Rider Location");
             }else{
                 status="pick order";
             }
         }
         if (status.equals("pick order")){
-            if (location.getLatitude()!=orderHistoryModel.getUser_lat()&&location.getLongitude()!=orderHistoryModel.getUser_lng()){
+            if (lat!=orderHistoryModel.getUser_lat()&&lng!=orderHistoryModel.getUser_lng()){
                 setlocationUpdates(new LatLng(orderHistoryModel.getUser_lat(), orderHistoryModel.getUser_lng())
-                        , new LatLng(location.getLatitude(),location.getLongitude()),"User Location","Rider Location");
+                        , new LatLng(lat,lng),"User Location","Rider Location");
             }else{
                 status="delivered";
 
             }
         }
-
-
-//        while ()/
-//        while(){
-//            mHandler.postDelayed(runnable = new Runnable() {
-//                public void run() {
-//                    mHandler.postDelayed(runnable, 5000);
-//                    Toast.makeText(TrackActivity.this, "location Update", Toast.LENGTH_SHORT).show();
-//                }
-//            }, 5000);
-//        }
-
-//        LatLngBounds.Builder builder = new LatLngBounds.Builder();
-//        MarkerOptions pickUpOptions = new MarkerOptions()
-//                .position(new LatLng(location.getLatitude(), location.getLongitude()))
-//                .draggable(false)
-//                .title("Shop Location")
-//                .icon(bitmapDescriptorFromVector(this, R.drawable.ic_baseline_location_on_24));
-//        Marker pickUpMarker = mMap.addMarker(pickUpOptions);
-//        builder.include(pickUpMarker.getPosition());
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_CODE_LOCATION_PERMISSION && grantResults.length > 0) {
 
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                getCurentLocation();
+            } else {
+                Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+    }
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
 

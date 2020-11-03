@@ -67,13 +67,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import okhttp3.internal.Util;
-
 public class TrackActivity extends FragmentActivity implements OnMapReadyCallback, TaskLoadedCallback, LocationListener {
+    private static final int REQUEST_CODE_LOCATION_PERMISSION = 1;
     private GoogleMap mMap;
     private MarkerOptions place1, place2;
     private Polyline currentPolyline;
-
     private boolean isDocOverlyOpen = false;
     private LinearLayout ll_openDialog, ll_orderlist;
     private SessionManager sessionManager = SessionManager.getInstance(this);
@@ -82,11 +80,9 @@ public class TrackActivity extends FragmentActivity implements OnMapReadyCallbac
     private double lat = 0.0, lng = 0.0;
     private Handler mHandler = new Handler();
     private Runnable runnable;
-    private Button pickOrder,deliveredOrder;
-    private static final int REQUEST_CODE_LOCATION_PERMISSION = 1;
-
-    private Handler handler= new Handler();
-    private String status="";
+    private Button pickOrder, deliveredOrder;
+    private Handler handler = new Handler();
+    private String status = "";
     private ImageView iv_closelist, iv_cust_no;
     private OrderHistoryModel orderHistoryModel;
     private TextView tv_date, tv_price, tv_order, tv_shop_name, tv_shop_address, tv_cust_name, tv_cust_no, tv_cust_address;
@@ -116,6 +112,17 @@ public class TrackActivity extends FragmentActivity implements OnMapReadyCallbac
             } catch (ParseException e) {
                 e.printStackTrace();
             }
+            pickOrder.setOnClickListener(view -> {
+                status = "pick order";
+                sessionManager.set("status", "pick order");
+                PickOrderApi();
+            });
+            deliveredOrder.setOnClickListener(view -> {
+                status = "delivered";
+                sessionManager.set("status", "");
+                DeliveredOrderApi();
+
+            });
             tv_date.setText(formattedDate);
             tv_order.setText(orderHistoryModel.getOrder_orders());
             tv_price.setText(MessageFormat.format("Rs.{0}/-", orderHistoryModel.getOrder_total_price()));
@@ -177,6 +184,11 @@ public class TrackActivity extends FragmentActivity implements OnMapReadyCallbac
         if (isDocOverlyOpen) {
             slideDown(ll_orderlist, view_overlay);
         }
+        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(TrackActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE_LOCATION_PERMISSION);
+        } else {
+            getCurentLocation();
+        }
     }
 
 
@@ -189,15 +201,15 @@ public class TrackActivity extends FragmentActivity implements OnMapReadyCallbac
 //        mMap.addMarker(place2);
         getCurentLocation();
         setlocationUpdates(new LatLng(orderHistoryModel.getShop_lat(), orderHistoryModel.getShop_lng())
-                , new LatLng(lat,lng),"Shop Location","Rider Location");
+                , new LatLng(orderHistoryModel.getUser_lat(), orderHistoryModel.getUser_lng()), "Shop Location", "Rider Location");
 
-//        runnable = new Runnable() {
-//            @Override
-//            public void run() {
-//                StartGettingLocation();
-//                handler.postDelayed(this, 1000);
-//            }
-//        };
+        runnable = new Runnable() {
+            @Override
+            public void run() {
+                StartGettingLocation();
+                handler.postDelayed(this, 1000);
+            }
+        };
 
     }
 
@@ -213,32 +225,20 @@ public class TrackActivity extends FragmentActivity implements OnMapReadyCallbac
 
     }
 
-    private void StartGettingLocation(){
+    private void StartGettingLocation() {
 
         getCurentLocation();
-        postLatLngApi(lat,lng);
+        postLatLngApi(lat, lng);
 
-        if (status.equals("")){
+        if (status.equals("") && sessionManager.getString("status").equals("")) {
             setlocationUpdates(new LatLng(orderHistoryModel.getShop_lat(), orderHistoryModel.getShop_lng())
-                    , new LatLng(lat,lng),"Shop Location","Rider Location");
-            status="on the way";
+                    , new LatLng(lat, lng), "Shop Location", "Rider Location");
         }
-        if (status.equals("on the way")){
-            if (lat!=orderHistoryModel.getShop_lat()&&lng!=orderHistoryModel.getShop_lng()){
-                setlocationUpdates(new LatLng(orderHistoryModel.getShop_lat(), orderHistoryModel.getShop_lng())
-                        , new LatLng(lat,lng),"Shop Location","Rider Location");
-            }else{
-                status="pick order";
-            }
-        }
-        if (status.equals("pick order")){
-            if (lat!=orderHistoryModel.getUser_lat()&&lng!=orderHistoryModel.getUser_lng()){
-                setlocationUpdates(new LatLng(orderHistoryModel.getUser_lat(), orderHistoryModel.getUser_lng())
-                        , new LatLng(lat,lng),"User Location","Rider Location");
-            }else{
-                status="delivered";
 
-            }
+        if (status.equals("pick order") && sessionManager.getString("status").equals("pick order")) {
+            setlocationUpdates(new LatLng(orderHistoryModel.getUser_lat(), orderHistoryModel.getUser_lng())
+                    , new LatLng(lat, lng), "User Location", "Rider Location");
+
         }
     }
 
@@ -246,15 +246,14 @@ public class TrackActivity extends FragmentActivity implements OnMapReadyCallbac
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_CODE_LOCATION_PERMISSION && grantResults.length > 0) {
-
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 getCurentLocation();
             } else {
                 Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show();
             }
         }
-
     }
+
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
 
@@ -276,11 +275,11 @@ public class TrackActivity extends FragmentActivity implements OnMapReadyCallbac
     }
 
 
-    private void PickOrderApi(){
+    private void PickOrderApi() {
         MyServerRequest myServerRequest = new MyServerRequest(TrackActivity.this, URLS.PickOrder + "/" + orderHistoryModel.getOrderId(), new ServerRequestListener() {
             @Override
             public void onPreResponse() {
-                UtilityFunctions.showProgressDialog(TrackActivity.this,true);
+                UtilityFunctions.showProgressDialog(TrackActivity.this, true);
             }
 
             @Override
@@ -289,8 +288,8 @@ public class TrackActivity extends FragmentActivity implements OnMapReadyCallbac
                 try {
                     if (jsonResponse.getBoolean(AppConstants.HAS_RESPONSE)) {
                         Toast.makeText(TrackActivity.this, "" + jsonResponse.getString(AppConstants.RESPONSE), Toast.LENGTH_SHORT).show();
-                    }else{
-                        Toast.makeText(TrackActivity.this, ""+jsonResponse.getString(AppConstants.MESSAGE), Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(TrackActivity.this, "" + jsonResponse.getString(AppConstants.MESSAGE), Toast.LENGTH_SHORT).show();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -299,11 +298,12 @@ public class TrackActivity extends FragmentActivity implements OnMapReadyCallbac
         });
         myServerRequest.sendGetRequest();
     }
-    private void DeliveredOrderApi(){
-        MyServerRequest myServerRequest = new MyServerRequest(TrackActivity.this, URLS.PickOrder + "/" + orderHistoryModel.getOrderId(), new ServerRequestListener() {
+
+    private void DeliveredOrderApi() {
+        MyServerRequest myServerRequest = new MyServerRequest(TrackActivity.this, URLS.DeliveredOrder + "/" + orderHistoryModel.getOrderId(), new ServerRequestListener() {
             @Override
             public void onPreResponse() {
-                UtilityFunctions.showProgressDialog(TrackActivity.this,true);
+                UtilityFunctions.showProgressDialog(TrackActivity.this, true);
             }
 
             @Override
@@ -311,9 +311,12 @@ public class TrackActivity extends FragmentActivity implements OnMapReadyCallbac
                 UtilityFunctions.hideProgressDialog(true);
                 try {
                     if (jsonResponse.getBoolean(AppConstants.HAS_RESPONSE)) {
+                        sessionManager.set(AppConstants.ORDER_ID, "");
+                        startActivity(new Intent(TrackActivity.this, DashboardActivity.class));
+                        finish();
                         Toast.makeText(TrackActivity.this, "" + jsonResponse.getString(AppConstants.RESPONSE), Toast.LENGTH_SHORT).show();
-                    }else{
-                        Toast.makeText(TrackActivity.this, ""+jsonResponse.getString(AppConstants.MESSAGE), Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(TrackActivity.this, "" + jsonResponse.getString(AppConstants.MESSAGE), Toast.LENGTH_SHORT).show();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -330,6 +333,8 @@ public class TrackActivity extends FragmentActivity implements OnMapReadyCallbac
         view_overlay = findViewById(R.id.view_track__overlayloader);
         iv_closelist = findViewById(R.id.iv_track_closelist);
         iv_cust_no = findViewById(R.id.iv_track_cust_no);
+        pickOrder = findViewById(R.id.btn_track_pickOrder);
+        deliveredOrder = findViewById(R.id.btn_track_deliveredOrder);
 
         tv_date = findViewById(R.id.tv_track_date);
         tv_price = findViewById(R.id.tv_track_price);
@@ -415,7 +420,8 @@ public class TrackActivity extends FragmentActivity implements OnMapReadyCallbac
         }).start();
 
     }
-    private void setlocationUpdates(LatLng shopLatLng, LatLng userLatLang,String FirstTitle,String SecondTitle) {
+
+    private void setlocationUpdates(LatLng userLatLang, LatLng shopLatLng, String FirstTitle, String SecondTitle) {
         mMap.clear();
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
         MarkerOptions pickUpOptions = new MarkerOptions()
@@ -428,6 +434,7 @@ public class TrackActivity extends FragmentActivity implements OnMapReadyCallbac
 
         MarkerOptions dropOffOptions = new MarkerOptions()
                 .position(userLatLang)
+//                .position(new LatLng(24.8631279, 67.0721177))
                 .draggable(false)
                 .title(SecondTitle)
                 .icon(bitmapDescriptorFromVector(this, R.drawable.destination_icon_managed));
@@ -445,6 +452,7 @@ public class TrackActivity extends FragmentActivity implements OnMapReadyCallbac
 
         mMap.animateCamera(cu);
 
+//        new FetchURL(this).execute(getUrl(shopLatLng, new LatLng(24.8631279, 67.0721177), "driving"), "driving");
         new FetchURL(this).execute(getUrl(shopLatLng, userLatLang, "driving"), "driving");
 
     }
@@ -480,10 +488,11 @@ public class TrackActivity extends FragmentActivity implements OnMapReadyCallbac
                     }
                 }, Looper.getMainLooper());
 
-        postLatLngApi(lat,lng);
+        postLatLngApi(orderHistoryModel.getUser_lat(), orderHistoryModel.getUser_lng());
+//        postLatLngApi(lat,lng);
     }
 
-    private void postLatLngApi(double late, double lngi){
+    private void postLatLngApi(double late, double lngi) {
 
         JSONObject jsonObject = new JSONObject();
         try {
@@ -506,8 +515,8 @@ public class TrackActivity extends FragmentActivity implements OnMapReadyCallbac
                 try {
                     if (jsonResponse.getBoolean(AppConstants.HAS_RESPONSE)) {
                         Toast.makeText(TrackActivity.this, "" + jsonResponse.getString(AppConstants.RESPONSE), Toast.LENGTH_SHORT).show();
-                    }else{
-                        Toast.makeText(TrackActivity.this, ""+jsonResponse.getString(AppConstants.MESSAGE), Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(TrackActivity.this, "" + jsonResponse.getString(AppConstants.MESSAGE), Toast.LENGTH_SHORT).show();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

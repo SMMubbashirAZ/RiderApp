@@ -46,7 +46,6 @@ import okhttp3.Response;
 
 public class RegisteredActivity extends BaseCompatActivity {
     private static final String TAG = RegisteredActivity.class.getSimpleName();
-    private static final int REQUEST_CODE_LOCATION_PERMISSION = 1;
     @BindView(R.id.tiedt_signup_name)
     TextInputEditText name;
     String imagePath = "";

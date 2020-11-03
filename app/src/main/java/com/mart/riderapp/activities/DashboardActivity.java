@@ -11,6 +11,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,7 +36,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class DashboardActivity extends AppCompatActivity {
+public class DashboardActivity extends BaseCompatActivity {
 
     private static final String TAG = DashboardActivity.class.getSimpleName();
     @BindView(R.id.rv_home_prod)
@@ -43,7 +44,8 @@ public class DashboardActivity extends AppCompatActivity {
     @BindView(R.id.edt_home_search)
     EditText edt_search;
     @BindView(R.id.tv_no_active_order_history)
-    TextView tv_no_active;
+    TextView tv_no_active; private View include_layout;
+    private ImageView iv_logout;
     private List<OrderHistoryModel> orderHistoryModelList = new ArrayList<>();
     private SessionManager sessionManager=SessionManager.getInstance(this);
     private OrderHistoryAdapter orderAdapter;
@@ -53,7 +55,12 @@ public class DashboardActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
         ButterKnife.bind(this);
+        include_layout = findViewById(R.id.include_home);
+        iv_logout = include_layout.findViewById(R.id.iv_appbar_logout_icon);
+        iv_logout.setOnClickListener(view -> {
+            showDialogue(R.layout.dialogue_logout_layout,"You will be logged out of the application. \\nDo You wish to continue","logout",null);
 
+        });
         if (UtilityFunctions.isNetworkAvailable(this)){
             userModel=sessionManager.getUserSession();
             if (userModel==null){
@@ -105,8 +112,6 @@ public class DashboardActivity extends AppCompatActivity {
                 UtilityFunctions.hideProgressDialog(true);
                 try {
                     if (jsonResponse.getBoolean(AppConstants.HAS_RESPONSE)) {
-
-
                         tv_no_active.setVisibility(View.GONE);
                         JSONArray jsonArray = jsonResponse.getJSONArray(AppConstants.RESPONSE);
                         for (int i = 0; i < jsonArray.length(); i++) {
@@ -126,7 +131,16 @@ public class DashboardActivity extends AppCompatActivity {
                             orderHistoryModel.setUser_lng(jsonArray.getJSONObject(i).getDouble("userLang"));
                             orderHistoryModel.setOrder_user_location(jsonArray.getJSONObject(i).getString("userLocation"));
                             orderHistoryModel.setOrder_date(jsonArray.getJSONObject(i).getString("orderDate"));
-                            orderHistoryModel.setApproved(false);
+                            orderHistoryModel.setStatusId(jsonArray.getJSONObject(i).getInt("statusID"));
+                            if (jsonArray.getJSONObject(i).getInt("statusID")==3){
+                                orderHistoryModel.setApproved(true);
+                            }else if (jsonArray.getJSONObject(i).getInt("statusID")==5){
+                                orderHistoryModel.setApproved(true);
+                            }else if (jsonArray.getJSONObject(i).getInt("statusID")==4){
+                                orderHistoryModel.setApproved(true);
+                            }else{
+                                orderHistoryModel.setApproved(false);
+                            }
                             orderHistoryModelList.add(orderHistoryModel);
                         }
                         orderAdapter = new OrderHistoryAdapter( orderHistoryModelList,DashboardActivity.this);
@@ -145,7 +159,6 @@ public class DashboardActivity extends AppCompatActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
             }
         });
         myServerRequest.sendGetRequest();

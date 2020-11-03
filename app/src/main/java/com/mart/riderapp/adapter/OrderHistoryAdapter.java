@@ -36,7 +36,6 @@ import com.mart.riderapp.utils.UtilityFunctions;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.net.URL;
 import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -57,7 +56,7 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
     public OrderHistoryAdapter(List<OrderHistoryModel> ordersList, Context context) {
         this.ordersList = ordersList;
         this.context = context;
-        sessionManager=SessionManager.getInstance(context);
+        sessionManager = SessionManager.getInstance(context);
     }
 
     public void addItem(OrderHistoryModel myOrderModel) {
@@ -79,7 +78,7 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
         holder.order_shop_name.setText(dataModel.getOrder_shop_name());
         holder.order_delivered.setText(dataModel.getOrder_user_name());
         holder.order_orders.setText(dataModel.getOrder_orders());
-        holder.order_price.setText(MessageFormat.format("Rs.{0}",dataModel.getOrder_total_price()));
+        holder.order_price.setText(MessageFormat.format("Rs.{0}", dataModel.getOrder_total_price()));
         holder.status.setText(dataModel.getOrder_status());
 
         holder.tvuserNo.setText(dataModel.getOrder_user_no());
@@ -96,27 +95,30 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
         }
         holder.order_date.setText(formattedDate);
         if (dataModel.isApproved()) {
+            if (dataModel.getStatusId() == 5) {
+                holder.track.setVisibility(View.GONE);
+            } else {
+                holder.track.setVisibility(View.VISIBLE);
+            }
             holder.tvNotApproved.setVisibility(View.GONE);
             holder.tvApproved.setVisibility(View.VISIBLE);
-            holder.track.setVisibility(View.VISIBLE);
 
         } else {
             holder.tvApproved.setVisibility(View.GONE);
-            holder.track.setVisibility(View.GONE);
             holder.tvNotApproved.setVisibility(View.VISIBLE);
         }
 
 
         holder.tvNotApproved.setOnClickListener(view -> {
 
-            if (UtilityFunctions.isNetworkAvailable(context)){
-                showApprovedOrderDialog(context,"Alert","Do you want to deliver this order",position,"approved");
-            }else{
+            if (UtilityFunctions.isNetworkAvailable(context)) {
+                showApprovedOrderDialog(context, "Alert", "Do you want to deliver this order", position, "approved");
+            } else {
                 Toast.makeText(context, "No Internet Connection", Toast.LENGTH_SHORT).show();
             }
         });
         holder.track.setOnClickListener(view -> {
-            showApprovedOrderDialog(context,"Alert","Do ou want to start this Order",position," ");
+            showApprovedOrderDialog(context, "Alert", "Do ou want to start this Order", position, " ");
         });
         RequestOptions options = new RequestOptions()
                 .centerCrop()
@@ -124,7 +126,7 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
                 .error(R.drawable.ic_baseline_error_outline_24);
 
         Glide.with(context)
-                .load(URLS.BASEIMGURL+dataModel.getOrder_shop_image())
+                .load(URLS.BASEIMGURL + dataModel.getOrder_shop_image())
                 .apply(options)
                 .thumbnail(Glide.with(context).load(R.drawable.loader_bck))
                 .into(holder.order_shop_image);
@@ -145,7 +147,7 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
         return ordersList.size();
     }
 
-    public void showApprovedOrderDialog(Context context, String title, String message, int position,String tag) {
+    public void showApprovedOrderDialog(Context context, String title, String message, int position, String tag) {
         View view = LayoutInflater.from(context).inflate(R.layout.custom_dialog_layout, new FrameLayout(context), false);
         final Dialog myDialog = new Dialog(context, R.style.FullDialogTheme);
         myDialog.setContentView(view);
@@ -164,11 +166,11 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
 //
         acceptBtn.setOnClickListener(v -> {
 
-            if (tag.equals("approved")){
+            if (tag.equals("approved")) {
                 MyServerRequest myServerRequest = new MyServerRequest(context, URLS.approvedOder + "/" + ordersList.get(position).getOrderId() + "/" + "6", new ServerRequestListener() {
                     @Override
                     public void onPreResponse() {
-                        UtilityFunctions.showProgressDialog(context,true);
+                        UtilityFunctions.showProgressDialog(context, true);
                     }
 
                     @Override
@@ -183,22 +185,22 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
 //                        productModelList.remove(position);
 //                        notifyItemRemoved(position);
 //                        notifyItemRangeChanged(position,productModelList.size());
-                            }else{
+                            } else {
                                 Toast.makeText(context, " " + jsonResponse.getString(AppConstants.MESSAGE), Toast.LENGTH_SHORT).show();
                             }
-                            Log.i(TAG, "onPostResponse: "+jsonResponse.toString());
+                            Log.i(TAG, "onPostResponse: " + jsonResponse.toString());
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
                     }
                 });
                 myServerRequest.sendGetRequest();
-            }else{
+            } else {
 
-                sessionManager.set(AppConstants.ORDER_ID,ordersList.get(position).getOrderId());
+                sessionManager.set(AppConstants.ORDER_ID, ordersList.get(position).getOrderId());
                 sessionManager.createOrderObject(ordersList.get(position));
-                context.startActivity(new Intent(context,TrackActivity.class));
-                ((Activity)context).finish();
+                context.startActivity(new Intent(context, TrackActivity.class));
+                ((Activity) context).finish();
             }
             myDialog.dismiss();
         });
@@ -219,7 +221,7 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvApproved,tvuserNo, tv_user_loc, tv_shop_loc,tvNotApproved,order_shop_name,order_delivered,order_date,order_price,order_orders,status;
+        private TextView tvApproved, tvuserNo, tv_user_loc, tv_shop_loc, tvNotApproved, order_shop_name, order_delivered, order_date, order_price, order_orders, status;
         private HexagonMaskView order_shop_image;
         private ImageView track;
 
@@ -236,7 +238,7 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
             tv_shop_loc = view.findViewById(R.id.tv_order_history_shop_loc);
             tv_user_loc = view.findViewById(R.id.tv_order_history_user_loc);
 
-               tvApproved = itemView.findViewById(R.id.tv_order_history_approved);
+            tvApproved = itemView.findViewById(R.id.tv_order_history_approved);
             tvNotApproved = itemView.findViewById(R.id.tv_order_history_not_approved);
             status = itemView.findViewById(R.id.tv_order_history_status);
             order_shop_image = view.findViewById(R.id.hmv_order_history_image);

@@ -6,6 +6,7 @@ package com.mart.riderapp.model;
 public class OrderHistoryModel {
     private String orderId,order_shop_name,order_user_name,order_user_no,order_total_price,order_orders,order_date,order_shop_image,order_status,order_user_location,order_shop_location;
     private double shop_lat,shop_lng,user_lat,user_lng;
+    private int statusId;
 
 
     private boolean isApproved;
@@ -19,6 +20,14 @@ public class OrderHistoryModel {
         this.order_orders = order_orders;
         this.order_date = order_date;
         this.order_shop_image = order_shop_image;
+    }
+
+    public int getStatusId() {
+        return statusId;
+    }
+
+    public void setStatusId(int statusId) {
+        this.statusId = statusId;
     }
 
     public String getOrder_shop_location() {

@@ -137,8 +137,6 @@ public class LoginActivity extends BaseCompatActivity implements Validator.Valid
                 UtilityFunctions.hideProgressDialog(true);
                 try {
                     if (jsonResponse.getBoolean(AppConstants.HAS_RESPONSE)){
-
-
                         UtilityFunctions.hideProgressDialog(true);
                         Toast.makeText(LoginActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
                         startActivity(new Intent(LoginActivity.this,DashboardActivity.class));

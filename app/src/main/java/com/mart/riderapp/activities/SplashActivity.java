@@ -49,7 +49,11 @@ public class SplashActivity extends BaseCompatActivity {
                         } finally {
                             if (sessionManager.getBoolean(AppConstants.IS_USER_LOGIN))
                             {
-                                if (sessionManager.getString(AppConstants.ORDER_ID).equals("")){
+                                if (sessionManager.getString(AppConstants.ORDER_ID)==null){
+                                    startActivity(new Intent(SplashActivity.this, DashboardActivity.class));
+
+                                }
+                                else if (sessionManager.getString(AppConstants.ORDER_ID).equals("")){
                                     startActivity(new Intent(SplashActivity.this, DashboardActivity.class));
                                 }else{
                                     startActivity(new Intent(SplashActivity.this, TrackActivity.class));

@@ -113,6 +113,7 @@ public class DashboardActivity extends BaseCompatActivity {
                 try {
                     if (jsonResponse.getBoolean(AppConstants.HAS_RESPONSE)) {
                         tv_no_active.setVisibility(View.GONE);
+                        edt_search.setVisibility(View.VISIBLE);
                         JSONArray jsonArray = jsonResponse.getJSONArray(AppConstants.RESPONSE);
                         for (int i = 0; i < jsonArray.length(); i++) {
                             OrderHistoryModel orderHistoryModel = new OrderHistoryModel();
@@ -154,6 +155,8 @@ public class DashboardActivity extends BaseCompatActivity {
                     } else {
 
                         tv_no_active.setVisibility(View.VISIBLE);
+                        edt_search.setVisibility(View.GONE);
+
                         Toast.makeText(DashboardActivity.this, " " + jsonResponse.getString(AppConstants.MESSAGE), Toast.LENGTH_SHORT).show();
                     }
                 } catch (JSONException e) {

@@ -156,9 +156,6 @@ public class MyServerRequest {
                         userModel.setUser_phn_no(response.getJSONArray(AppConstants.RESPONSE).getJSONObject(0).getString("number"));
                         userModel.setUser_email(response.getJSONArray(AppConstants.RESPONSE).getJSONObject(0).getString("email"));
                         userModel.setUser_image(response.getJSONArray(AppConstants.RESPONSE).getJSONObject(0).getString("img"));
-                        userModel.setUser_address(response.getJSONArray(AppConstants.RESPONSE).getJSONObject(0).getString("address"));
-                        userModel.setUser_lat(response.getJSONArray(AppConstants.RESPONSE).getJSONObject(0).getDouble("latitude"));
-                        userModel.setUser_lng(response.getJSONArray(AppConstants.RESPONSE).getJSONObject(0).getDouble("longitude"));
                         userSettings.createUserSession(userModel);
                     } else {
                         UtilityFunctions.hideProgressDialog(true);

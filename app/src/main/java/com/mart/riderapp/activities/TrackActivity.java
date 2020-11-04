@@ -200,16 +200,14 @@ public class TrackActivity extends FragmentActivity implements OnMapReadyCallbac
 //        mMap.addMarker(place1);
 //        mMap.addMarker(place2);
         getCurentLocation();
-        setlocationUpdates(new LatLng(orderHistoryModel.getShop_lat(), orderHistoryModel.getShop_lng())
-                , new LatLng(orderHistoryModel.getUser_lat(), orderHistoryModel.getUser_lng()), "Shop Location", "Rider Location");
 
-        runnable = new Runnable() {
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                StartGettingLocation();
-                handler.postDelayed(this, 1000);
+                getCurentLocation();
             }
-        };
+        }, 5000);
 
     }
 
@@ -225,22 +223,7 @@ public class TrackActivity extends FragmentActivity implements OnMapReadyCallbac
 
     }
 
-    private void StartGettingLocation() {
-
-        getCurentLocation();
-        postLatLngApi(lat, lng);
-
-        if (status.equals("") && sessionManager.getString("status").equals("")) {
-            setlocationUpdates(new LatLng(orderHistoryModel.getShop_lat(), orderHistoryModel.getShop_lng())
-                    , new LatLng(lat, lng), "Shop Location", "Rider Location");
-        }
-
-        if (status.equals("pick order") && sessionManager.getString("status").equals("pick order")) {
-            setlocationUpdates(new LatLng(orderHistoryModel.getUser_lat(), orderHistoryModel.getUser_lng())
-                    , new LatLng(lat, lng), "User Location", "Rider Location");
-
-        }
-    }
+   
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -484,12 +467,24 @@ public class TrackActivity extends FragmentActivity implements OnMapReadyCallbac
                             int latestLocIndex = locationResult.getLocations().size() - 1;
                             lat = locationResult.getLocations().get(latestLocIndex).getLatitude();
                             lng = locationResult.getLocations().get(latestLocIndex).getLongitude();
+                            postLatLngApi(lat,lng);
+                            if (status.equals("") && sessionManager.getString("status").equals("")) {
+                                setlocationUpdates(new LatLng(orderHistoryModel.getShop_lat(), orderHistoryModel.getShop_lng())
+                                        , new LatLng(lat, lng), "Shop Location", "Rider Location");
+                            }
+
+                            if (status.equals("pick order") && sessionManager.getString("status").equals("pick order")) {
+                                setlocationUpdates(new LatLng(orderHistoryModel.getUser_lat(), orderHistoryModel.getUser_lng())
+                                        , new LatLng(lat, lng), "User Location", "Rider Location");
+
+                            }
+                            Toast.makeText(TrackActivity.this, "Location Updated", Toast.LENGTH_SHORT).show();
                         }
                     }
                 }, Looper.getMainLooper());
 
-        postLatLngApi(orderHistoryModel.getUser_lat(), orderHistoryModel.getUser_lng());
-//        postLatLngApi(lat,lng);
+//        postLatLngApi(orderHistoryModel.getUser_lat(), orderHistoryModel.getUser_lng());
+
     }
 
     private void postLatLngApi(double late, double lngi) {

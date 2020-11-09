@@ -181,6 +181,7 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
                             if (jsonResponse.getBoolean(AppConstants.HAS_RESPONSE)) {
                                 Toast.makeText(context, " " + jsonResponse.getString(AppConstants.RESPONSE), Toast.LENGTH_SHORT).show();
                                 ordersList.get(position).setApproved(true);
+                                ordersList.get(position).setOrder_status("Approved By Rider");
                                 notifyDataSetChanged();
 //                        productModelList.remove(position);
 //                        notifyItemRemoved(position);

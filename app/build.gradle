@@ -74,6 +74,10 @@ dependencies {
     implementation 'com.daimajia.androidanimations:library:2.4@aar'
 
 
+    //for tracking
+    implementation 'com.github.balwinderSingh1989:androidBestLocationTracker:1.0'
+
+
     implementation 'com.jakewharton:butterknife:10.2.3'
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.3'
 

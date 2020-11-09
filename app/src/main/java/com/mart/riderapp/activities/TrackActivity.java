@@ -46,6 +46,9 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.location.bestlocationstrategy.BaseLocationStrategy;
+import com.location.bestlocationstrategy.LocationChangesListener;
+import com.location.bestlocationstrategy.LocationUtils;
 import com.mart.riderapp.Constants.AppConstants;
 import com.mart.riderapp.Constants.URLS;
 import com.mart.riderapp.R;
@@ -72,6 +75,8 @@ public class TrackActivity extends FragmentActivity implements OnMapReadyCallbac
     private GoogleMap mMap;
     private MarkerOptions place1, place2;
     private Polyline currentPolyline;
+
+    private BaseLocationStrategy baseLocationStrategy;
     private boolean isDocOverlyOpen = false;
     private LinearLayout ll_openDialog, ll_orderlist;
     private SessionManager sessionManager = SessionManager.getInstance(this);
@@ -120,6 +125,7 @@ public class TrackActivity extends FragmentActivity implements OnMapReadyCallbac
             deliveredOrder.setOnClickListener(view -> {
                 status = "delivered";
                 sessionManager.set("status", "");
+                baseLocationStrategy.stopListeningForLocationChanges();
                 DeliveredOrderApi();
 
             });
@@ -217,7 +223,6 @@ public class TrackActivity extends FragmentActivity implements OnMapReadyCallbac
 
     }
 
-   
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -261,6 +266,7 @@ public class TrackActivity extends FragmentActivity implements OnMapReadyCallbac
             }
         }, 5000);
     }
+
     private void PickOrderApi() {
         MyServerRequest myServerRequest = new MyServerRequest(TrackActivity.this, URLS.PickOrder + "/" + orderHistoryModel.getOrderId(), new ServerRequestListener() {
             @Override
@@ -461,38 +467,86 @@ public class TrackActivity extends FragmentActivity implements OnMapReadyCallbac
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        LocationServices.getFusedLocationProviderClient(TrackActivity.this)
-                .requestLocationUpdates(locationRequest, new LocationCallback() {
-                    @Override
-                    public void onLocationResult(LocationResult locationResult) {
-                        super.onLocationResult(locationResult);
-                        LocationServices.getFusedLocationProviderClient(TrackActivity.this).removeLocationUpdates(this);
-                        if (locationResult != null && locationResult.getLocations().size() > 0) {
-                            int latestLocIndex = locationResult.getLocations().size() - 1;
-                            lat = locationResult.getLocations().get(latestLocIndex).getLatitude();
-                            lng = locationResult.getLocations().get(latestLocIndex).getLongitude();
-                            postLatLngApi(lat,lng);
-                            if ( sessionManager.getString("status")==null){
-                                setlocationUpdates(new LatLng(orderHistoryModel.getShop_lat(), orderHistoryModel.getShop_lng())
-                                        , new LatLng(lat, lng), "Shop Location", "Rider Location");
-                            }
-                            else if (status.equals("") && sessionManager.getString("status").equals("")) {
-                                setlocationUpdates(new LatLng(orderHistoryModel.getShop_lat(), orderHistoryModel.getShop_lng())
-                                        , new LatLng(lat, lng), "Shop Location", "Rider Location");
-                            }
-
-                            else if (status.equals("pick order") && sessionManager.getString("status").equals("pick order")) {
-                                setlocationUpdates(new LatLng(orderHistoryModel.getUser_lat(), orderHistoryModel.getUser_lng())
-                                        , new LatLng(lat, lng), "User Location", "Rider Location");
-
-                            }
-                            Toast.makeText(TrackActivity.this, "Location Updated", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                }, Looper.getMainLooper());
+        setupLocation();
+//        LocationServices.getFusedLocationProviderClient(TrackActivity.this)
+//                .requestLocationUpdates(locationRequest, new LocationCallback() {
+//                    @Override
+//                    public void onLocationResult(LocationResult locationResult) {
+//                        super.onLocationResult(locationResult);
+//                        LocationServices.getFusedLocationProviderClient(TrackActivity.this).removeLocationUpdates(this);
+//                        if (locationResult != null && locationResult.getLocations().size() > 0) {
+//                            int latestLocIndex = locationResult.getLocations().size() - 1;
+//                            lat = locationResult.getLocations().get(latestLocIndex).getLatitude();
+//                            lng = locationResult.getLocations().get(latestLocIndex).getLongitude();
+//                            postLatLngApi(lat,lng);
+//                            if ( sessionManager.getString("status")==null){
+//                                setlocationUpdates(new LatLng(orderHistoryModel.getShop_lat(), orderHistoryModel.getShop_lng())
+//                                        , new LatLng(lat, lng), "Shop Location", "Rider Location");
+//                            }
+//                            else if (status.equals("") && sessionManager.getString("status").equals("")) {
+//                                setlocationUpdates(new LatLng(orderHistoryModel.getShop_lat(), orderHistoryModel.getShop_lng())
+//                                        , new LatLng(lat, lng), "Shop Location", "Rider Location");
+//                            }
+//
+//                            else if (status.equals("pick order") && sessionManager.getString("status").equals("pick order")) {
+//                                setlocationUpdates(new LatLng(orderHistoryModel.getUser_lat(), orderHistoryModel.getUser_lng())
+//                                        , new LatLng(lat, lng), "User Location", "Rider Location");
+//
+//                            }
+//                            Toast.makeText(TrackActivity.this, "Location Updated", Toast.LENGTH_SHORT).show();
+//                        }
+//                    }
+//                }, Looper.getMainLooper());
 
 //        postLatLngApi(orderHistoryModel.getUser_lat(), orderHistoryModel.getUser_lng());
 
+
+
+
+    }
+    private void setupLocation() {
+        baseLocationStrategy = LocationUtils.getLocationStatergy(this);
+        baseLocationStrategy.setDisplacement(10);
+        baseLocationStrategy.setPeriodicalUpdateTime(10000);
+        baseLocationStrategy.setPeriodicalUpdateEnabled(true);
+        baseLocationStrategy.startListeningForLocationChanges(new LocationChangesListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                lat = location.getLatitude();
+                lng = location.getLongitude();
+                Toast.makeText(TrackActivity.this, "Latitude: " + lat + "Longitude: " + lng, Toast.LENGTH_SHORT).show();
+                postLatLngApi(lat, lng);
+                if (sessionManager.getString("status") == null) {
+                    setlocationUpdates(new LatLng(orderHistoryModel.getShop_lat(), orderHistoryModel.getShop_lng())
+                            , new LatLng(lat, lng), "Shop Location", "Rider Location");
+                } else if (status.equals("") && sessionManager.getString("status").equals("")) {
+                    setlocationUpdates(new LatLng(orderHistoryModel.getShop_lat(), orderHistoryModel.getShop_lng())
+                            , new LatLng(lat, lng), "Shop Location", "Rider Location");
+                } else if (status.equals("pick order") && sessionManager.getString("status").equals("pick order")) {
+                    setlocationUpdates(new LatLng(orderHistoryModel.getUser_lat(), orderHistoryModel.getUser_lng())
+                            , new LatLng(lat, lng), "User Location", "Rider Location");
+
+                }
+                Toast.makeText(TrackActivity.this, "Location Updated", Toast.LENGTH_SHORT).show();
+                //get best accurate location here on location change
+            }
+
+            @Override
+            public void onConnected() {
+                Toast.makeText(TrackActivity.this, "Connected", Toast.LENGTH_SHORT).show();
+                //best location provider has been connected
+            }
+
+            @Override
+            public void onConnectionStatusChanged() {
+            }
+
+            @Override
+            public void onFailure(String s) {
+                Toast.makeText(TrackActivity.this, "error:"+s, Toast.LENGTH_SHORT).show();
+            }
+        });
+        baseLocationStrategy.startLocationUpdates();
     }
 
     private void postLatLngApi(double late, double lngi) {

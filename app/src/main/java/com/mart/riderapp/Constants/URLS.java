@@ -4,8 +4,8 @@ package com.mart.riderapp.Constants;
  * Created by WeMartDevelopers .
  */
 public class URLS {
-    public static String BASEURL = "https://www.wemarz.somee.com/api";
-    public static String BASEIMGURL = "https://www.wemarz.somee.com";
+    public static String BASEURL = "https://www.wemartz.somee.com/api";
+    public static String BASEIMGURL = "https://www.wemartz.somee.com";
     public static String riderregistered = BASEURL+"/Registration/RiderRegister";
     public static String forgetPassEmail = BASEURL+"/Notify/ForgetPassEmail";
     public static String approvedOder = BASEURL+"/Order/ApproveOrderByRider";
